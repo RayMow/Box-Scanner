@@ -22,18 +22,22 @@
         .checked-row {
             background-color: #d4edda; /* Light green background */
         }
+#result{
+float:right;
+}
     </style>
 </head>
 <body>
     <div class="sticky-top">
-        <span id="totalBoxes">Total boxes: 0</span> |
-        <span id="boxesFound">Boxes found: 0</span> |
-        <span id="result"></span>
+<span>Boxes found:</span>
+<span id="boxesFound">0</span> <span> of </span>
+        <span id="totalBoxes">0</span>
+        <div id="result"></div>
     </div>
 <div style="width: 500px;" id="qr-reader" class="mb-3"></div>
 <input type="file" id="csvFile" accept=".csv" style="margin-top: 10px; margin-left: 10px;"/>
-    <div class="container mt-5" id="content" style="display: none;">
-        <h2 id="title">CSV Data Table</h2>
+    <div class="container mt-2" id="content" style="display: none;">
+        <h2 id="title">Receive order</h2>
         <div class="mb-3">
             <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
             <button class="btn btn-primary mt-2" id="updateButton">Update Check</button>
@@ -164,7 +168,7 @@ document.getElementById('content').style.display = 'none';
                 localStorage.setItem('csvData', JSON.stringify(data));
                 displayTable();
             }
-            document.getElementById('result').textContent = "Result: " + resultText;
+            document.getElementById('result').textContent = resultText;
             updateStatusBar();
         }
 
@@ -174,8 +178,8 @@ document.getElementById('content').style.display = 'none';
             var totalBoxes = data.length;
             var boxesFound = data.filter(row => row.Check === 'Yes').length;
 
-            document.getElementById('totalBoxes').textContent = "Total boxes: " + totalBoxes;
-            document.getElementById('boxesFound').textContent = "Boxes found: " + boxesFound;
+            document.getElementById('totalBoxes').textContent = totalBoxes;
+            document.getElementById('boxesFound').textContent = boxesFound;
             console.log("Status bar updated.");
         }
 
@@ -189,7 +193,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                     { facingMode: "environment" }, // Prefer rear camera
                     {
                         fps: 10,    // Frame per second
-                        qrbox: 250  // Dimension of QR scanning box
+                        qrbox: 200  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
                         console.log("QR Code detected: ", qrCodeMessage);
