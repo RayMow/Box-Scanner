@@ -28,19 +28,20 @@
     <div class="sticky-top">
         <span id="totalBoxes">Total boxes: 0</span> |
         <span id="boxesFound">Boxes found: 0</span> |
-        <span id="result">Result: </span>
+        <span id="result"></span>
     </div>
-    <div class="container mt-5">
-        <h2>CSV Data Table</h2>
+<div style="width: 500px;" id="qr-reader" class="mb-3"></div>
+<input type="file" id="csvFile" accept=".csv" style="margin-top: 10px; margin-left: 10px;"/>
+    <div class="container mt-5" id="content" style="display: none;">
+        <h2 id="title">CSV Data Table</h2>
         <div class="mb-3">
-            <label for="boxLabelInput" class="form-label">Box Label</label>
-            <input type="text" class="form-control" id="boxLabelInput" placeholder="Enter Box Label">
+            <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
             <button class="btn btn-primary mt-2" id="updateButton">Update Check</button>
             <button class="btn btn-secondary mt-2" id="scanButton">Scan</button>
-            <button class="btn btn-danger mt-2" id="clearStorageButton">Clear Local Storage</button>
+            
         </div>
-        <div style="width: 500px;" id="qr-reader" class="mb-3"></div>
-        <input type="file" id="csvFile" accept=".csv" />
+        
+
 
         <table class="table table-bordered mt-3" id="dataTable">
             <thead>
@@ -60,13 +61,17 @@
             </thead>
             <tbody id="tableBody"></tbody>
         </table>
+<button class="btn btn-danger mt-2" id="clearStorageButton">Clear all</button>
     </div>
 
     <script>
         window.onload = function() {
-            console.log("Page loaded. Attempting to display table from local storage.");
-            displayTable();
-            updateStatusBar();
+            if (localStorage.getItem('csvData')) {
+                displayTable();
+                updateStatusBar();
+                document.getElementById('content').style.display = 'block';
+                document.getElementById('csvFile').style.display = 'none';
+            }
         };
 
         document.getElementById('csvFile').addEventListener('change', function(event){
@@ -83,6 +88,8 @@
                     localStorage.setItem('csvData', JSON.stringify(trimmedData));
                     displayTable();
                     updateStatusBar();
+document.getElementById('content').style.display = 'block';
+                    document.getElementById('csvFile').style.display = 'none';
                 },
                 header: true
             });
@@ -99,14 +106,18 @@
             localStorage.clear();
             displayTable(); // Refresh table to show that data is cleared
             updateStatusBar();
+document.getElementById('content').style.display = 'none';
+            document.getElementById('csvFile').style.display = 'block';
         });
 
-        function displayTable() {
-            console.log("Displaying table.");
+                function displayTable() {
             var data = JSON.parse(localStorage.getItem('csvData')) || [];
             var tableBody = document.getElementById('tableBody');
-
             tableBody.innerHTML = '';
+
+            if (data.length > 0) {
+                document.getElementById('title').textContent = "Receive order " + (data[0]['Order No'] || 'N/A');
+            }
 
             data.forEach(function(row, index) {
                 var tr = document.createElement('tr');
@@ -184,11 +195,11 @@ document.getElementById('scanButton').addEventListener('click', function() {
                         console.log("QR Code detected: ", qrCodeMessage);
                         document.getElementById('boxLabelInput').value = qrCodeMessage;
 			updateCheckColumn(qrCodeMessage);
-                        html5QrCode.stop().then(ignore => {
-                            console.log("QR Code scanning stopped.");
-                        }).catch(err => {
-                            console.error("Error stopping QR Scanner: ", err);
-                        });
+                        //html5QrCode.stop().then(ignore => {
+                            //console.log("QR Code scanning stopped.");
+                        //}).catch(err => {
+                           // console.error("Error stopping QR Scanner: ", err);
+                        //});
                     },
                     errorMessage => {
                         console.log("QR Scanner error: ", errorMessage);
