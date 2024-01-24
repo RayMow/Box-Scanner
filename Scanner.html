@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Table with Barcode Scanner</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Papa Parse Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- html5-qrcode Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            background-color: white;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .checked-row {
+            background-color: #d4edda; /* Light green background */
+        }
+    </style>
+</head>
+<body>
+    <div class="sticky-top">
+        <span id="totalBoxes">Total boxes: 0</span> |
+        <span id="boxesFound">Boxes found: 0</span> |
+        <span id="result">Result: </span>
+    </div>
+    <div class="container mt-5">
+        <h2>CSV Data Table</h2>
+        <div class="mb-3">
+            <label for="boxLabelInput" class="form-label">Box Label</label>
+            <input type="text" class="form-control" id="boxLabelInput" placeholder="Enter Box Label">
+            <button class="btn btn-primary mt-2" id="updateButton">Update Check</button>
+            <button class="btn btn-secondary mt-2" id="scanButton">Scan</button>
+            <button class="btn btn-danger mt-2" id="clearStorageButton">Clear Local Storage</button>
+        </div>
+        <div style="width: 500px;" id="qr-reader" class="mb-3"></div>
+        <input type="file" id="csvFile" accept=".csv" />
+
+        <table class="table table-bordered mt-3" id="dataTable">
+            <thead>
+                <tr>
+                    <th>Check</th>
+                    <th>Box Label</th>
+                    <th>Quantity</th>
+                    <th>Mark For</th>
+                    <th>Description</th>
+                    <th>Item</th>
+                    <th>Order No</th>
+                    <th>Length(cm)</th>
+                    <th>Width(cm)</th>
+                    <th>Height(cm)</th>
+                    <th>Weight(kg)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        window.onload = function() {
+            console.log("Page loaded. Attempting to display table from local storage.");
+            displayTable();
+            updateStatusBar();
+        };
+
+        document.getElementById('csvFile').addEventListener('change', function(event){
+            console.log("CSV file selected.");
+            var file = event.target.files[0];
+            Papa.parse(file, {
+                complete: function(results) {
+                    console.log("CSV file parsed. Saving to local storage.");
+                    var trimmedData = results.data.map(row => {
+                        return Object.fromEntries(
+                            Object.entries(row).map(([key, value]) => [key.trim(), value.toString().trim()])
+                        );
+                    });
+                    localStorage.setItem('csvData', JSON.stringify(trimmedData));
+                    displayTable();
+                    updateStatusBar();
+                },
+                header: true
+            });
+        });
+
+        document.getElementById('updateButton').addEventListener('click', function(){
+            console.log("Update button clicked.");
+            var inputVal = document.getElementById('boxLabelInput').value.trim();
+            updateCheckColumn(inputVal);
+        });
+
+        document.getElementById('clearStorageButton').addEventListener('click', function(){
+            console.log("Clear storage button clicked.");
+            localStorage.clear();
+            displayTable(); // Refresh table to show that data is cleared
+            updateStatusBar();
+        });
+
+        function displayTable() {
+            console.log("Displaying table.");
+            var data = JSON.parse(localStorage.getItem('csvData')) || [];
+            var tableBody = document.getElementById('tableBody');
+
+            tableBody.innerHTML = '';
+
+            data.forEach(function(row, index) {
+                var tr = document.createElement('tr');
+                if (row.Check === 'Yes') {
+                    tr.classList.add('checked-row'); // Add class for styling
+                }
+                tr.innerHTML = `
+                    <td>${row.Check || ''}</td>
+                    <td>${row['Box Label'] || ''}</td>
+                    <td>${row.Quantity || ''}</td>
+                    <td>${row['Mark For'] || ''}</td>
+                    <td>${row.Description || ''}</td>
+                    <td>${row.Item || ''}</td>
+                    <td>${row['Order No'] || ''}</td>
+                    <td>${row['Length(cm)'] || ''}</td>
+                    <td>${row['Width(cm)'] || ''}</td>
+                    <td>${row['Height(cm)'] || ''}</td>
+                    <td>${row['Weight(kg)'] || ''}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            console.log("Table displayed.");
+        }
+
+        function updateCheckColumn(inputVal) {
+            console.log("Updating Check column for: ", inputVal);
+            var data = JSON.parse(localStorage.getItem('csvData')) || [];
+            var updated = false;
+            var resultText = "Box not found";
+
+            data.forEach(function(row) {
+                if (row['Box Label'] === inputVal) {
+                    if (row.Check !== 'Yes') {
+                        row.Check = 'Yes';
+                        updated = true;
+                        resultText = "Box found";
+                    } else {
+                        resultText = "Box already found";
+                    }
+                }
+            });
+
+            if (updated) {
+                localStorage.setItem('csvData', JSON.stringify(data));
+                displayTable();
+            }
+            document.getElementById('result').textContent = "Result: " + resultText;
+            updateStatusBar();
+        }
+
+        function updateStatusBar() {
+            console.log("Updating status bar.");
+            var data = JSON.parse(localStorage.getItem('csvData')) || [];
+            var totalBoxes = data.length;
+            var boxesFound = data.filter(row => row.Check === 'Yes').length;
+
+            document.getElementById('totalBoxes').textContent = "Total boxes: " + totalBoxes;
+            document.getElementById('boxesFound').textContent = "Boxes found: " + boxesFound;
+            console.log("Status bar updated.");
+        }
+
+        // [Rest of your existing QR scanner code]
+document.getElementById('scanButton').addEventListener('click', function() {
+            console.log("Scan button clicked.");
+            if (document.getElementById('qr-reader').innerHTML === '') {
+                console.log("Initializing QR Scanner");
+                const html5QrCode = new Html5Qrcode("qr-reader");
+                html5QrCode.start(
+                    { facingMode: "environment" }, // Prefer rear camera
+                    {
+                        fps: 10,    // Frame per second
+                        qrbox: 250  // Dimension of QR scanning box
+                    },
+                    qrCodeMessage => {
+                        console.log("QR Code detected: ", qrCodeMessage);
+                        document.getElementById('boxLabelInput').value = qrCodeMessage;
+			updateCheckColumn(qrCodeMessage);
+                        html5QrCode.stop().then(ignore => {
+                            console.log("QR Code scanning stopped.");
+                        }).catch(err => {
+                            console.error("Error stopping QR Scanner: ", err);
+                        });
+                    },
+                    errorMessage => {
+                        console.log("QR Scanner error: ", errorMessage);
+                    }
+                ).catch(err => {
+                    console.error("Error starting QR Scanner: ", err);
+                });
+            } else {
+                console.log("QR Scanner already initialized.");
+            }
+        });
+    </script>
+    </script>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
