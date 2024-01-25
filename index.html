@@ -17,13 +17,16 @@
     z-index: 1020;
     background-color: white;
     padding: 10px;
+	padding-bottom: 20px;
     border-bottom: 1px solid #dee2e6;
+	font-size: large;
 }
 .checked-row {
     background-color: #d4edda; /* Light green background */
 }
 #failMessage, #successMessage {
-    float: right;
+    float: right;	
+    font-size: x-large;
 }
 </style>
 </head>
@@ -37,8 +40,9 @@
   <h2 id="title">Receive order</h2>
   <div class="mb-3">
     <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
-    <button class="btn btn-primary mt-2" id="updateButton">Check</button>
-    <button class="btn btn-secondary mt-2" id="scanButton">Scanner</button>
+    <button class="btn btn-success mt-2" id="updateButton">Check</button>
+	  <button class="btn btn-danger mt-2" id="unCheckButton">Uncheck</button>
+    <button class="btn btn-primary mt-2 px-5" id="scanButton">Scanner</button>
   </div>
   <table class="table table-hover table-responsive table-sm mt-3" id="dataTable">
     <thead>
@@ -111,6 +115,12 @@
             console.log("Update button clicked.");
             var inputVal = document.getElementById('boxLabelInput').value.trim();
             updateCheckColumn(inputVal);
+        });
+	
+	        document.getElementById('unCheckButton').addEventListener('click', function(){
+            console.log("Uncheck button clicked.");
+            var inputVal = document.getElementById('boxLabelInput').value.trim();
+            unCheckColumn(inputVal);
         });
 
         document.getElementById('clearStorageButton').addEventListener('click', function(){
@@ -203,7 +213,7 @@ errorbp.play();
 			if(resultText === "Box found"){
 			   document.getElementById('successMessage').textContent = resultText;
 				document.getElementById('failMessage').textContent = "";
-				alert(document.getElementById('boxLabelInput').value +" "+data[i].Description+" box found.");
+				alert(data[i]['Box Label'] +" "+data[i].Description+" box found.");
 			   }else{
 				   document.getElementById('failMessage').textContent = resultText;
 				   document.getElementById('successMessage').textContent = "";
@@ -212,6 +222,33 @@ errorbp.play();
 			
             
         }
+	
+	
+	function unCheckColumn(inputVal) {
+            var data = JSON.parse(localStorage.getItem('csvData')) || [];
+            var updated = false;
+			
+			for (var i = 0; i < data.length; i++) {
+        if (data[i]['Box Label'] === inputVal) {
+			if(data[i].Check === 'Yes'){
+			   data[i].Check = '';
+            	updated = true;
+            break; // Stop after the first match is found and updated
+			   }
+            
+        }
+    }
+            if (updated) {
+                localStorage.setItem('csvData', JSON.stringify(data));
+                displayTable();
+            }	
+			updateStatusBar();
+           
+        }
+	
+	
+	
+	
 
         function updateStatusBar() {
             console.log("Updating status bar.");
