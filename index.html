@@ -38,7 +38,7 @@
   <div class="mb-3">
     <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
     <button class="btn btn-primary mt-2" id="updateButton">Check</button>
-    <button class="btn btn-secondary mt-2" id="scanButton">Scan</button>
+    <button class="btn btn-secondary mt-2" id="scanButton">Scanner</button>
   </div>
   <table class="table table-hover table-responsive table-sm mt-3" id="dataTable">
     <thead>
@@ -229,7 +229,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                 html5QrCode.start(
                     { facingMode: "environment" }, // Prefer rear camera
                     {
-                        fps: 10,    // Frame per second
+                        fps: 1,    // Frame per second
                         qrbox: 250  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
@@ -237,7 +237,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
 						navigator.vibrate(200);
                         document.getElementById('boxLabelInput').value = qrCodeMessage.trim();
 			updateCheckColumn(qrCodeMessage);
-						alert(qrCodeMessage);
+						//alert(qrCodeMessage);
 
                     },
                     errorMessage => {
