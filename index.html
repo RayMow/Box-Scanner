@@ -26,7 +26,7 @@
 }
 #failMessage, #successMessage {
     float: right;	
-    font-size: x-large;
+    font-size: larger;
 }
 </style>
 </head>
@@ -177,9 +177,10 @@ var errorbp = document.getElementById('errorbeep');
 function playBeep(resultText) {
 if(resultText==="Box found"){ 
 console.log(resultText)
+navigator.vibrate(200); 
 scanbp.play();
 }else{
-errorbp.play();
+//errorbp.play();
 }
 };
 
@@ -269,6 +270,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
             console.log("Scan button clicked.");
             if (document.getElementById('qr-reader').innerHTML === '') {
                 console.log("Initializing QR Scanner");
+				document.getElementById('scanButton').textContent ="Close scanner";
                 const html5QrCode = new Html5Qrcode("qr-reader");
                 html5QrCode.start(
                     { facingMode: "environment" }, // Prefer rear camera
@@ -278,7 +280,6 @@ document.getElementById('scanButton').addEventListener('click', function() {
                     },
                     qrCodeMessage => {
                         console.log("QR Code detected: ", qrCodeMessage);
-						navigator.vibrate(200); 
 						updateCheckColumn(qrCodeMessage.trim());
 						document.getElementById('boxLabelInput').value = qrCodeMessage.trim();
 						//alert(qrCodeMessage);
@@ -295,6 +296,8 @@ document.getElementById('scanButton').addEventListener('click', function() {
                 console.log("QR Scanner already initialized.");
 				
                        html5QrCode.clear();
+				document.getElementById('qr-reader').innerHTML = '';
+				document.getElementById('scanButton').textContent ="Scanner";
             }
         });
    
