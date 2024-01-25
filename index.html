@@ -47,7 +47,7 @@ float:right;
         
 
 
-        <table class="table table-bordered mt-3" id="dataTable">
+        <table class="table table-hover table-responsive table-sm mt-3" id="dataTable">
             <thead>
                 <tr>
                     <th>Check</th>
@@ -66,6 +66,8 @@ float:right;
             <tbody id="tableBody"></tbody>
         </table>
 <button class="btn btn-danger mt-2" id="clearStorageButton">Clear all</button>
+<audio id="scanbeep" src="content/Scanbeep.mp3"></audio>
+<audio id="errorbeep" src="content/Errorbeep.mp3"></audio>
     </div>
 
     <script>
@@ -146,12 +148,26 @@ document.getElementById('content').style.display = 'none';
             console.log("Table displayed.");
         }
 
+//Beep
+var scanbp = document.getElementById('scanbeep');
+var errorbp = document.getElementById('errorbeep');
+
+function playBeep(resultText) {
+
+if(resultText==="Box found"){ 
+console.log(resultText)
+scanbp.play();
+}else{
+errorbp.play();
+}
+};
+
         function updateCheckColumn(inputVal) {
             console.log("Updating Check column for: ", inputVal);
             var data = JSON.parse(localStorage.getItem('csvData')) || [];
             var updated = false;
             var resultText = "Box not found";
-
+	
             data.forEach(function(row) {
                 if (row['Box Label'] === inputVal) {
                     if (row.Check !== 'Yes') {
@@ -160,9 +176,12 @@ document.getElementById('content').style.display = 'none';
                         resultText = "Box found";
                     } else {
                         resultText = "Box already found";
+			
                     }
                 }
+		
             });
+
 
             if (updated) {
                 localStorage.setItem('csvData', JSON.stringify(data));
@@ -170,6 +189,7 @@ document.getElementById('content').style.display = 'none';
             }
             document.getElementById('result').textContent = resultText;
             updateStatusBar();
+playBeep(resultText);
         }
 
         function updateStatusBar() {
@@ -183,7 +203,7 @@ document.getElementById('content').style.display = 'none';
             console.log("Status bar updated.");
         }
 
-        // [Rest of your existing QR scanner code]
+        // QR scanner code]
 document.getElementById('scanButton').addEventListener('click', function() {
             console.log("Scan button clicked.");
             if (document.getElementById('qr-reader').innerHTML === '') {
@@ -196,9 +216,11 @@ document.getElementById('scanButton').addEventListener('click', function() {
                         qrbox: 200  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
+			navigator.vibrate(200);
                         console.log("QR Code detected: ", qrCodeMessage);
                         document.getElementById('boxLabelInput').value = qrCodeMessage;
 			updateCheckColumn(qrCodeMessage);
+
                         //html5QrCode.stop().then(ignore => {
                             //console.log("QR Code scanning stopped.");
                         //}).catch(err => {
