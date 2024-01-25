@@ -22,14 +22,14 @@
 .checked-row {
     background-color: #d4edda; /* Light green background */
 }
-#result {
+#failMessage, #successMessage {
     float: right;
 }
 </style>
 </head>
 <body>
 <div class="sticky-top"> <span>Boxes found:</span> <span id="boxesFound">0</span> <span> of </span> <span id="totalBoxes">0</span>
-  <div id="result"></div>
+  <div class="badge bg-danger text-white" id="failMessage"></div><div class="badge bg-success text-white" id="successMessage"></div>
 </div>
 <div class="container mb-3" id="qr-reader"></div>
 <input type="file" id="csvFile" accept=".csv" style="margin-top: 10px; margin-left: 10px;"/>
@@ -37,7 +37,7 @@
   <h2 id="title">Receive order</h2>
   <div class="mb-3">
     <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
-    <button class="btn btn-primary mt-2" id="updateButton">Update Check</button>
+    <button class="btn btn-primary mt-2" id="updateButton">Check</button>
     <button class="btn btn-secondary mt-2" id="scanButton">Scan</button>
   </div>
   <table class="table table-hover table-responsive table-sm mt-3" id="dataTable">
@@ -59,7 +59,7 @@
     <tbody id="tableBody">
     </tbody>
   </table>
-  <button class="btn btn-danger mt-2" id="clearStorageButton">Clear all</button>
+  <button class="btn btn-danger my-3" id="clearStorageButton">Clear all</button>
   <audio id="scanbeep" src="content/Scanbeep.mp3"></audio>
   <audio id="errorbeep" src="content/Errorbeep.mp3"></audio>
 </div>
@@ -115,11 +115,14 @@
 
         document.getElementById('clearStorageButton').addEventListener('click', function(){
             console.log("Clear storage button clicked.");
-            localStorage.clear();
+			if(confirm("Clear all loaded data for this order?")){
+			   localStorage.clear();
             displayTable(); // Refresh table to show that data is cleared
             updateStatusBar();
 document.getElementById('content').style.display = 'none';
             document.getElementById('csvFile').style.display = 'block';
+			   }
+            
         });
 
                 function displayTable() {
@@ -159,10 +162,9 @@ var scanbp = document.getElementById('scanbeep');
 var errorbp = document.getElementById('errorbeep');
 
 function playBeep(resultText) {
-
+navigator.vibrate(200);
 if(resultText==="Box found"){ 
 console.log(resultText)
-	navigator.vibrate(200);
 scanbp.play();
 }else{
 errorbp.play();
@@ -195,7 +197,15 @@ errorbp.play();
                 localStorage.setItem('csvData', JSON.stringify(data));
                 displayTable();
             }
-            document.getElementById('result').textContent = resultText;
+			if(resultText === "Box found"){
+			   document.getElementById('successMessage').textContent = resultText;
+				document.getElementById('failMessage').textContent = "";
+			   }else{
+				   document.getElementById('failMessage').textContent = resultText;
+				   document.getElementById('successMessage').textContent = "";
+			   }
+            
+			
             updateStatusBar();
 playBeep(resultText);
         }
@@ -235,6 +245,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                     }
                 ).catch(err => {
                     console.error("Error starting QR Scanner: ", err);
+					alert("Scanner is not available on this device.");
                 });
             } else {
                 console.log("QR Scanner already initialized.");
