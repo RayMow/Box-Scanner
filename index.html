@@ -196,17 +196,21 @@ errorbp.play();
                 localStorage.setItem('csvData', JSON.stringify(data));
                 displayTable();
             }
+			
+			updateStatusBar();
+			playBeep(resultText);
+			
 			if(resultText === "Box found"){
 			   document.getElementById('successMessage').textContent = resultText;
 				document.getElementById('failMessage').textContent = "";
+				alert(document.getElementById('boxLabelInput').value +" "+data[i].Description+" box found.");
 			   }else{
 				   document.getElementById('failMessage').textContent = resultText;
 				   document.getElementById('successMessage').textContent = "";
 			   }
             
 			
-            updateStatusBar();
-playBeep(resultText);
+            
         }
 
         function updateStatusBar() {
@@ -229,7 +233,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                 html5QrCode.start(
                     { facingMode: "environment" }, // Prefer rear camera
                     {
-                        fps: 1,    // Frame per second
+                        fps: 10,    // Frame per second
                         qrbox: 250  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
