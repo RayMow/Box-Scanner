@@ -162,6 +162,7 @@ function playBeep(resultText) {
 
 if(resultText==="Box found"){ 
 console.log(resultText)
+	navigator.vibrate(200);
 scanbp.play();
 }else{
 errorbp.play();
@@ -223,7 +224,6 @@ document.getElementById('scanButton').addEventListener('click', function() {
                         qrbox: 250  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
-			navigator.vibrate(200);
                         console.log("QR Code detected: ", qrCodeMessage);
                         document.getElementById('boxLabelInput').value = qrCodeMessage.trim();
 			updateCheckColumn(qrCodeMessage);
@@ -238,7 +238,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                 });
             } else {
                 console.log("QR Scanner already initialized.");
-				alert("Close");
+				
                        html5QrCode.clear();
             }
         });
