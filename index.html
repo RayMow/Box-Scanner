@@ -162,7 +162,6 @@ var scanbp = document.getElementById('scanbeep');
 var errorbp = document.getElementById('errorbeep');
 
 function playBeep(resultText) {
-navigator.vibrate(200);
 if(resultText==="Box found"){ 
 console.log(resultText)
 scanbp.play();
@@ -235,6 +234,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                     },
                     qrCodeMessage => {
                         console.log("QR Code detected: ", qrCodeMessage);
+						navigator.vibrate(200);
                         document.getElementById('boxLabelInput').value = qrCodeMessage.trim();
 			updateCheckColumn(qrCodeMessage);
 						alert(qrCodeMessage);
