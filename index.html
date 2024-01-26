@@ -276,7 +276,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
             if (document.getElementById('qr-reader').innerHTML === '') {
                 console.log("Initializing QR Scanner");
 				document.getElementById('scanButton').textContent ="Close scanner";
-                const html5QrCode = new Html5Qrcode("qr-reader");
+                html5QrCode = new Html5Qrcode("qr-reader");
                 html5QrCode.start(
                     { facingMode: "environment" }, // Prefer rear camera
                     {
@@ -300,7 +300,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
             } else {
                 console.log("QR Scanner already initialized.");
 				//Close
-				document.getElementById('qr-reader').innerHTML = '';
+				//document.getElementById('qr-reader').innerHTML = '';
 				document.getElementById('scanButton').textContent ="Scanner";
 				html5QrCode.stop().then(ignore => {
                             alert("QR Code scanning stopped.");
