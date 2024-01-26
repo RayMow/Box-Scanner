@@ -299,12 +299,13 @@ document.getElementById('scanButton').addEventListener('click', function() {
             } else {
                 console.log("QR Scanner already initialized.");
 				//Close
-				document.getElementById('scanButton').textContent ="Scanner";
 				html5QrCode.stop().then(ignore => {
                             console.log("QR Code scanning stopped.");
                         }).catch(err => {
                             console.log("Error stopping QR Scanner: ", err);
                         });
+				document.getElementById('scanButton').textContent ="Scanner";
+				document.getElementById('qr-reader').innerHTML = '';
             }
         });
    
