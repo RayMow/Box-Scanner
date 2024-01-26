@@ -31,14 +31,18 @@
 </style>
 </head>
 <body>
-<div class="sticky-top"> <span>Boxes found:</span> <span id="boxesFound">0</span> <span> of </span> <span id="totalBoxes">0</span>
+<div class="sticky-top" id="statusBar"> <span>Boxes found:</span> <span id="boxesFound">0</span> <span> of </span> <span id="totalBoxes">0</span>
   <div class="badge bg-danger text-white" id="failMessage"></div><div class="badge bg-success text-white" id="successMessage"></div>
 	<div class="progress mt-3" role="progressbar" aria-label="progress bar">
   <div class="progress-bar" id="progbar" style="width: 0%"></div>
 </div>
 </div>
 <div class="container mb-3" id="qr-reader"></div>
-<input type="file" id="csvFile" accept=".csv" style="margin-top: 10px; margin-left: 10px;"/>
+	<div class="border rounded bg-light p-4 m-4 text-center" id="welcomeMessage">
+		<h1 class="mb-3">Delivery box scanner</h1>
+		<h4> Select a DeliveryChecklist.csv file to begin:</h4>
+		<input type="file" id="csvFile" accept=".csv" style="margin-top: 15px;"/>
+	</div>
 <div class="container mt-2" id="content" style="display: none;">
   <h2 id="title">Receive order</h2>
   <div class="mb-3">
@@ -52,7 +56,7 @@
       <tr>
         <th>Check</th>
         <th>Box Label</th>
-        <th>Quantity</th>
+        <th>Qty</th>
         <th>Mark For</th>
         <th>Description</th>
         <th>Item</th>
@@ -72,7 +76,8 @@
                 displayTable();
                 updateStatusBar();
                 document.getElementById('content').style.display = 'block';
-                document.getElementById('csvFile').style.display = 'none';
+				document.getElementById('statusBar').style.display = 'block';
+                document.getElementById('welcomeMessage').style.display = 'none';
             }
         };
 
@@ -104,7 +109,8 @@
                 displayTable();
                 updateStatusBar();
                 document.getElementById('content').style.display = 'block';
-                document.getElementById('csvFile').style.display = 'none';
+				document.getElementById('statusBar').style.display = 'block';
+                document.getElementById('welcomeMessage').style.display = 'none';
             },
             header: true
         });
@@ -132,7 +138,8 @@
             displayTable(); // Refresh table to show that data is cleared
             updateStatusBar();
 document.getElementById('content').style.display = 'none';
-            document.getElementById('csvFile').style.display = 'block';
+				document.getElementById('statusBar').style.display = 'none';
+            document.getElementById('welcomeMessage').style.display = 'block';
 			   }
             
         });
@@ -245,10 +252,7 @@ scanbp.play();
 			updateStatusBar();
            
         }
-	
-	
-	
-	
+
 
         function updateStatusBar() {
             console.log("Updating status bar.");
