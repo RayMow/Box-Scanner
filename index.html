@@ -285,7 +285,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                     { facingMode: "environment" }, // Prefer rear camera
                     {
                         fps: 5,    // Frame per second
-                        qrbox: 250  // Dimension of QR scanning box
+                        qrbox: 200  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
                         console.log("QR Code detected: ", qrCodeMessage);
