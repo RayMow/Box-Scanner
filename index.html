@@ -287,7 +287,6 @@ document.getElementById('scanButton').addEventListener('click', function() {
                         console.log("QR Code detected: ", qrCodeMessage);
 						updateCheckColumn(qrCodeMessage.trim());
 						document.getElementById('boxLabelInput').value = qrCodeMessage.trim();
-						//alert(qrCodeMessage);
 
                     },
                     errorMessage => {
@@ -300,14 +299,12 @@ document.getElementById('scanButton').addEventListener('click', function() {
             } else {
                 console.log("QR Scanner already initialized.");
 				//Close
-				//document.getElementById('qr-reader').innerHTML = '';
 				document.getElementById('scanButton').textContent ="Scanner";
 				html5QrCode.stop().then(ignore => {
-                            alert("QR Code scanning stopped.");
+                            console.log("QR Code scanning stopped.");
                         }).catch(err => {
-                            alert("Error stopping QR Scanner: ", err);
+                            console.log("Error stopping QR Scanner: ", err);
                         });
-				
             }
         });
    
