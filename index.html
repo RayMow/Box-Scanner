@@ -298,15 +298,12 @@ document.getElementById('scanButton').addEventListener('click', function() {
 					alert("Scanner is not available on this device.");
                 });
             } else {
-                console.log("QR Scanner already initialized.");     
-				//document.getElementById('qr-reader').innerHTML = '';
+                console.log("QR Scanner already initialized.");
+				//Close
+				document.getElementById('qr-reader').innerHTML = '';
 				document.getElementById('scanButton').textContent ="Scanner";
 				//html5QrCode.clear();
-				html5QrCode.stop().then(ignore => {
-                            console.log("QR Code scanning stopped.");
-                        }).catch(err => {
-                            console.error("Error stopping QR Scanner: ", err);
-                        });
+				
             }
         });
    
