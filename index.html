@@ -33,6 +33,9 @@
 <body>
 <div class="sticky-top"> <span>Boxes found:</span> <span id="boxesFound">0</span> <span> of </span> <span id="totalBoxes">0</span>
   <div class="badge bg-danger text-white" id="failMessage"></div><div class="badge bg-success text-white" id="successMessage"></div>
+	<div class="progress mt-3" role="progressbar" aria-label="progress bar">
+  <div class="progress-bar" id="progbar" style="width: 0%"></div>
+</div>
 </div>
 <div class="container mb-3" id="qr-reader"></div>
 <input type="file" id="csvFile" accept=".csv" style="margin-top: 10px; margin-left: 10px;"/>
@@ -262,6 +265,15 @@ scanbp.play();
 
             document.getElementById('totalBoxes').textContent = totalBoxes;
             document.getElementById('boxesFound').textContent = boxesFound;
+			//progress bar value
+			var currentProgress = (boxesFound/totalBoxes)*100;
+			document.getElementById('progbar').style.width = currentProgress+"%";
+			if(boxesFound===totalBoxes){
+				//All boxes found
+			   document.getElementById('title').style.color = "green";
+			   }else{
+				   document.getElementById('title').style.color = "black";
+			   }
             console.log("Status bar updated.");
         }
 
