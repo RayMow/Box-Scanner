@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSV Table with Barcode Scanner</title>
+<title>Delivery box scanner</title>
 <!-- Bootstrap CSS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 <!-- Papa Parse Library --> 
@@ -280,7 +280,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                 html5QrCode.start(
                     { facingMode: "environment" }, // Prefer rear camera
                     {
-                        fps: 10,    // Frame per second
+                        fps: 5,    // Frame per second
                         qrbox: 250  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
@@ -298,11 +298,15 @@ document.getElementById('scanButton').addEventListener('click', function() {
 					alert("Scanner is not available on this device.");
                 });
             } else {
-                console.log("QR Scanner already initialized.");
-				
-                       html5QrCode.clear();
-				document.getElementById('qr-reader').innerHTML = '';
+                console.log("QR Scanner already initialized.");     
+				//document.getElementById('qr-reader').innerHTML = '';
 				document.getElementById('scanButton').textContent ="Scanner";
+				//html5QrCode.clear();
+				html5QrCode.stop().then(ignore => {
+                            console.log("QR Code scanning stopped.");
+                        }).catch(err => {
+                            console.error("Error stopping QR Scanner: ", err);
+                        });
             }
         });
    
