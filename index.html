@@ -37,7 +37,7 @@
   <div class="progress-bar" id="progbar" style="width: 0%"></div>
 </div>
 </div>
-<div class="container mb-3" id="qr-reader"></div>
+<div class="container-fluid mb-3" id="qr-reader"></div>
 <div class="p-4 m-4 text-center" id="welcomeMessage" style="display: block;">
 		<h1 class="mb-5">Delivery box scanner</h1>
 		<em> Select a DeliveryChecklist.csv file to begin:<br></em>
@@ -285,7 +285,7 @@ document.getElementById('scanButton').addEventListener('click', function() {
                     { facingMode: "environment" }, // Prefer rear camera
                     {
                         fps: 5,    // Frame per second
-                        qrbox: 200  // Dimension of QR scanning box
+                        qrbox: 250  // Dimension of QR scanning box
                     },
                     qrCodeMessage => {
                         console.log("QR Code detected: ", qrCodeMessage);
