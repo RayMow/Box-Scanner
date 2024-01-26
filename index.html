@@ -57,10 +57,6 @@
         <th>Description</th>
         <th>Item</th>
         <th>Order No</th>
-        <th>Length(cm)</th>
-        <th>Width(cm)</th>
-        <th>Height(cm)</th>
-        <th>Weight(kg)</th>
       </tr>
     </thead>
     <tbody id="tableBody">
@@ -163,10 +159,7 @@ document.getElementById('content').style.display = 'none';
                     <td>${row.Description || ''}</td>
                     <td>${row.Item || ''}</td>
                     <td>${row['Order No'] || ''}</td>
-                    <td>${row['Length(cm)'] || ''}</td>
-                    <td>${row['Width(cm)'] || ''}</td>
-                    <td>${row['Height(cm)'] || ''}</td>
-                    <td>${row['Weight(kg)'] || ''}</td>
+
                 `;
                 tableBody.appendChild(tr);
             });
