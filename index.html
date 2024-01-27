@@ -221,7 +221,11 @@ scanbp.play();
 			   document.getElementById('successMessage').textContent = data[i]['Box Label'] +" Found";
 				document.getElementById('failMessage').textContent = "";
 				//alert(data[i]['Box Label'] +" "+data[i].Description+" box found.");
-				html5QrCode.pause(true);
+				var scannerState = html5QrCode.getState();
+				if(scannerState = 2){
+		   			html5QrCode.pause(true);
+		   }
+				
 			   }else{
 				   document.getElementById('failMessage').textContent = resultText;
 				   document.getElementById('successMessage').textContent = "";
@@ -314,9 +318,13 @@ document.getElementById('scanButton').addEventListener('click', function() {
 				document.getElementById('qr-reader').innerHTML = '';
             }
         });
-	//Pause scanner on click
+	//unPause scanner on click if paused
 	document.getElementById('qr-reader').addEventListener('click', function() {
-        html5QrCode.pause(true);
+		var scannerState = html5QrCode.getState();
+		if(scannerState = 3){
+		   html5QrCode.resume();
+		   }
+        
     });
    
 </script> 
