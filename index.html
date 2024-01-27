@@ -218,7 +218,7 @@ scanbp.play();
 			playBeep(resultText);
 			
 			if(resultText === "Box found"){
-			   document.getElementById('successMessage').textContent = resultText;
+			   document.getElementById('successMessage').textContent = data[i]['Box Label'] +" Found";
 				document.getElementById('failMessage').textContent = "";
 				//alert(data[i]['Box Label'] +" "+data[i].Description+" box found.");
 				html5QrCode.pause(true);
@@ -269,6 +269,7 @@ scanbp.play();
 			if(boxesFound===totalBoxes){
 				//All boxes found
 			   document.getElementById('title').style.color = "green";
+			document.getElementById('successMessage').textContent = "All boxes found.";
 			   }else{
 				   document.getElementById('title').style.color = "black";
 			   }
@@ -313,6 +314,10 @@ document.getElementById('scanButton').addEventListener('click', function() {
 				document.getElementById('qr-reader').innerHTML = '';
             }
         });
+	//Pause scanner on click
+	document.getElementById('qr-reader').addEventListener('click', function() {
+        html5QrCode.pause(true);
+    });
    
 </script> 
 
