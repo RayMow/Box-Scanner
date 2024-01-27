@@ -17,38 +17,40 @@
     z-index: 1020;
     background-color: white;
     padding: 10px;
-	padding-bottom: 20px;
+    padding-bottom: 20px;
     border-bottom: 1px solid #dee2e6;
-	font-size: large;
+    font-size: large;
 }
 .checked-row {
     background-color: #d4edda; /* Light green background */
 }
 #failMessage, #successMessage {
-    float: right;	
+    float: right;
     font-size: larger;
 }
 </style>
 </head>
 <body>
 <div class="sticky-top" id="statusBar" style="display: none;"> <span>Boxes found:</span> <span id="boxesFound">0</span> <span> of </span> <span id="totalBoxes">0</span>
-  <div class="badge bg-danger text-white" id="failMessage"></div><div class="badge bg-success text-white" id="successMessage"></div>
-	<div class="progress mt-3" role="progressbar" aria-label="progress bar">
-  <div class="progress-bar" id="progbar" style="width: 0%"></div>
-</div>
+  <div class="badge bg-danger text-white" id="failMessage"></div>
+  <div class="badge bg-success text-white" id="successMessage"></div>
+  <div class="progress mt-3" role="progressbar" aria-label="progress bar">
+    <div class="progress-bar" id="progbar" style="width: 0%"></div>
+  </div>
 </div>
 <div class="mb-3" id="qr-reader"></div>
 <div class="p-4 m-4 text-center" id="welcomeMessage" style="display: block;">
-		<h1 class="mb-5">Delivery box scanner</h1>
-		<em> Select a DeliveryChecklist.csv file to begin:<br></em>
-		<input type="file" id="csvFile" accept=".csv" style="margin-top: 15px;" class="bg-light border rounded p-3">
-	</div>
+  <h1 class="mb-5">Delivery box scanner</h1>
+  <em> Select a DeliveryChecklist.csv file to begin:<br>
+  </em>
+  <input type="file" id="csvFile" accept=".csv" style="margin-top: 15px;" class="bg-light border rounded p-3">
+</div>
 <div class="container mt-2" id="content" style="display: none;">
   <h2 id="title">Receive order</h2>
   <div class="mb-3">
     <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
-    <button class="btn btn-success mt-2" id="updateButton">Check</button>
-	  <button class="btn btn-danger mt-2" id="unCheckButton">Uncheck</button>
+    <button class="btn btn-success mt-2" id="updateButton" disabled>Check</button>
+    <button class="btn btn-danger mt-2" id="unCheckButton" disabled>Uncheck</button>
     <button class="btn btn-primary mt-2 px-5" id="scanButton">Scanner</button>
   </div>
   <table class="table table-hover table-responsive table-sm mt-3" id="dataTable">
@@ -116,6 +118,22 @@
         });
     });
 
+	
+	//Disable buttons if no input
+	var boxInput = document.getElementById('boxLabelInput');
+	var checkButton = document.getElementById('updateButton');
+	var uncheckButton = document.getElementById('unCheckButton');
+	boxInput.addEventListener('input', function() {
+        if (boxInput.value.trim() !== '') {
+            checkButton.disabled = false;
+			uncheckButton.disabled = false;
+        } else {
+            checkButton.disabled = true;
+			uncheckButton.disabled = true;
+        }
+    });
+
+	
         document.getElementById('updateButton').addEventListener('click', function(){
             console.log("Update button clicked.");
             var inputVal = document.getElementById('boxLabelInput').value.trim();
@@ -177,8 +195,8 @@ document.getElementById('content').style.display = 'none';
 var scanbp = document.getElementById('scanbeep');
 var errorbp = document.getElementById('errorbeep');
 
-function playBeep(resultText) {
-if(resultText==="Box found"){ 
+function playBeep(found) {
+if(found===true){ 
 console.log(resultText)
 navigator.vibrate(200); 
 scanbp.play();
@@ -191,7 +209,8 @@ scanbp.play();
             console.log("Updating Check column for: ", inputVal);
             var data = JSON.parse(localStorage.getItem('csvData')) || [];
             var updated = false;
-            var resultText = "Box not found";
+			var found = false;
+            resultText = "Not found";
 
 			
 			for (var i = 0; i < data.length; i++) {
@@ -199,7 +218,8 @@ scanbp.play();
 			if(data[i].Check !== 'Yes'){
 			   data[i].Check = 'Yes';
             	updated = true;
-            	resultText = "Box found";
+            	resultText = data[i]['Box Label'] +" found";
+				found = true;
             break; // Stop after the first match is found and updated
 			   }else {
                         resultText = "Box already found";
@@ -215,10 +235,10 @@ scanbp.play();
             }
 			
 			updateStatusBar();
-			playBeep(resultText);
+			playBeep(found);
 			
-			if(resultText === "Box found"){
-			   document.getElementById('successMessage').textContent = data[i]['Box Label'] +" Found";
+			if(found === true){
+			   document.getElementById('successMessage').textContent = resultText;
 				document.getElementById('failMessage').textContent = "";
 				//alert(data[i]['Box Label'] +" "+data[i].Description+" box found.");
 				var scannerState = html5QrCode.getState();
@@ -239,22 +259,34 @@ scanbp.play();
 	function unCheckColumn(inputVal) {
             var data = JSON.parse(localStorage.getItem('csvData')) || [];
             var updated = false;
+			var found = false;
+			resultText = "Not found";
 			
 			for (var i = 0; i < data.length; i++) {
         if (data[i]['Box Label'] === inputVal) {
 			if(data[i].Check === 'Yes'){
 			   data[i].Check = '';
             	updated = true;
+				found = true;
+				resultText = data[i]['Box Label'] +" unchecked";
             break; // Stop after the first match is found and updated
 			   }
             
         }
-    }
+    		}
             if (updated) {
                 localStorage.setItem('csvData', JSON.stringify(data));
                 displayTable();
             }	
 			updateStatusBar();
+		
+					if(found === true){
+			   document.getElementById('successMessage').textContent = resultText;
+				document.getElementById('failMessage').textContent = "";
+			   }else{
+				   document.getElementById('failMessage').textContent = resultText;
+				   document.getElementById('successMessage').textContent = "";
+			   }
            
         }
 
@@ -273,7 +305,7 @@ scanbp.play();
 			if(boxesFound===totalBoxes){
 				//All boxes found
 			   document.getElementById('title').style.color = "green";
-			document.getElementById('successMessage').textContent = "All boxes found.";
+			resultText = "All boxes found!";
 			   }else{
 				   document.getElementById('title').style.color = "black";
 			   }
