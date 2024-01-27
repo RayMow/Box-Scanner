@@ -220,7 +220,8 @@ scanbp.play();
 			if(resultText === "Box found"){
 			   document.getElementById('successMessage').textContent = resultText;
 				document.getElementById('failMessage').textContent = "";
-				alert(data[i]['Box Label'] +" "+data[i].Description+" box found.");
+				//alert(data[i]['Box Label'] +" "+data[i].Description+" box found.");
+				html5QrCode.pause(true);
 			   }else{
 				   document.getElementById('failMessage').textContent = resultText;
 				   document.getElementById('successMessage').textContent = "";
