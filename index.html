@@ -36,6 +36,7 @@
     display: none; /* Initially hidden */
 }
 
+
 </style>
 </head>
 <body>
@@ -71,12 +72,11 @@
     <button class="btn btn-danger mt-2" id="unCheckButton" disabled>Uncheck</button>
     <button class="btn btn-primary mt-2 px-5" id="scanButton">Scanner</button>
   </div>
-  <table class="table table-hover table-responsive table-sm mt-3" id="dataTable">
+  <table class="table table-hover table-responsive mt-3" id="dataTable">
     <thead>
       <tr>
         <th>Check</th>
         <th>Box Label</th>
-        <th>Qty</th>
         <th>Mark For</th>
         <th>Description</th>
         <th>Item</th>
@@ -197,7 +197,6 @@ document.getElementById('content').style.display = 'none';
                 tr.innerHTML = `
                     <td>${row.Check || ''}</td>
                     <td>${row['Box Label'] || ''}</td>
-                    <td>${row.Quantity || ''}</td>
                     <td>${row['Mark For'] || ''}</td>
                     <td>${row.Description || ''}</td>
                     <td>${row.Item || ''}</td>
