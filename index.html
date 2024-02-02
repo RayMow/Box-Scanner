@@ -10,6 +10,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> 
 <!-- html5-qrcode Library --> 
 <script src="https://unpkg.com/html5-qrcode"></script>
+	<!-- Bootstrap JS, Popper.js, and jQuery --> 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script> 
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <style>
 .sticky-top {
     position: sticky;
@@ -28,6 +32,10 @@
     float: right;
     font-size: larger;
 }
+	#clearBtn {
+    display: none; /* Initially hidden */
+}
+
 </style>
 </head>
 <body>
@@ -48,7 +56,17 @@
 <div class="container mt-2" id="content" style="display: none;">
   <h2 id="title">Receive order</h2>
   <div class="mb-3">
+	  
+	  
+<div class="input-group">
     <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="clearBtn">X</button>
+    </div>
+</div>
+
+	  
+<!--    <input type="text" class="form-control" id="boxLabelInput" placeholder="Box Label">-->
     <button class="btn btn-success mt-2" id="updateButton" disabled>Check</button>
     <button class="btn btn-danger mt-2" id="unCheckButton" disabled>Uncheck</button>
     <button class="btn btn-primary mt-2 px-5" id="scanButton">Scanner</button>
@@ -360,12 +378,39 @@ document.getElementById('scanButton').addEventListener('click', function() {
 		   }
         
     });
+	
+	//Filter/search table
+	
+	$(document).ready(function(){
+  $("#boxLabelInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#dataTable tbody tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+	
+	//Clear search
+	
+	$(document).ready(function() {
+    $('#boxLabelInput').on('input', function() {
+        if ($(this).val().length > 0) {
+            $('#clearBtn').show();
+        } else {
+            $('#clearBtn').hide();
+        }
+    });
+
+    $('#clearBtn').click(function() {
+        $('#boxLabelInput').val('').focus();
+		document.getElementById('boxLabelInput').dispatchEvent(new Event('keyup'));
+        $(this).hide();
+    });
+});
+
    
 </script> 
 
-<!-- Bootstrap JS, Popper.js, and jQuery --> 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script> 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 </body>
 </html>
